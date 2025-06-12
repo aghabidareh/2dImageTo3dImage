@@ -59,3 +59,16 @@ def create_point_cloud(rgb_image, depth_map, focal_length=500.0):
     pcd.colors = o3d.utility.Vector3dVector(colors)
 
     return pcd
+
+
+def main():
+    image_path = "/content/drive/MyDrive/machine-learning-based-image/image.jpg"
+    image = load_image(image_path)
+
+    depth_map = estimate_depth(image)
+
+    point_cloud = create_point_cloud(image, depth_map)
+
+    output_path = "/content/drive/MyDrive/machine-learning-based-image/output_point_cloud.ply"
+    o3d.io.write_point_cloud(output_path, point_cloud)
+    print(f"Point cloud saved to {output_path}")
