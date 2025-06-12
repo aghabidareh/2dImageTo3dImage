@@ -37,3 +37,25 @@ def estimate_depth(image):
     ).squeeze().cpu().numpy()
 
     return depth
+
+
+def create_point_cloud(rgb_image, depth_map, focal_length=500.0):
+    rgb = np.array(rgb_image)
+
+    height, width = depth_map.shape
+    x, y = np.meshgrid(np.arange(width), np.arange(height))
+
+    depth_map = np.clip(depth_map, 1e-6, np.max(depth_map))
+
+    z = depth_map
+    x = (x - width / 2) * z / focal_length
+    y = (y - height / 2) * z / focal_length
+
+    points = np.stack((x, y, z), axis=-1).reshape(-1, 3)
+    colors = rgb.reshape(-1, 3) / 255.0
+
+    pcd = o3d.geometry.PointCloud()
+    pcd.points = o3d.utility.Vector3dVector(points)
+    pcd.colors = o3d.utility.Vector3dVector(colors)
+
+    return pcd
