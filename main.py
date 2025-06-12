@@ -72,3 +72,6 @@ def main():
     output_path = "output_point_cloud.ply"
     o3d.io.write_point_cloud(output_path, point_cloud)
     print(f"Point cloud saved to {output_path}")
+
+if __name__ == "__main__":
+    main()
