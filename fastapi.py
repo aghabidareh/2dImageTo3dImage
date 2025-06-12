@@ -15,3 +15,6 @@ app = FastAPI(title="Image to 3D Point Cloud API", description="API for Image to
 model_type = "DPT_Large"
 midas = torch.hub.load("intel-isl/MiDaS", model_type, pretrained=True)
 midas.eval()
+
+device = torch.device("cpu")
+midas.to(device)
