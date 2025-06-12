@@ -1,14 +1,16 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
-from fastapi.responses import FileResponse
-import numpy as np
-import cv2
-import torch
-import open3d as o3d
-from PIL import Image
-from torchvision.transforms import Compose, Resize, ToTensor, Normalize
 import os
 import tempfile
 import uuid
+
+import numpy as np
+import open3d as o3d
+import torch
+from PIL import Image
+from fastapi.responses import FileResponse
+from starlette.background import BackgroundTask
+from torchvision.transforms import Compose, Resize, ToTensor, Normalize
+
+from fastapi import FastAPI, File, UploadFile, HTTPException
 
 app = FastAPI(title="Image to 3D Point Cloud API", description="API for Image to 3D Point Cloud", version="1.0")
 
@@ -63,7 +65,10 @@ def create_point_cloud(rgb_image: Image.Image, depth_map: np.ndarray, focal_leng
 
     return pcd
 
+
 app.get('/')
+
+
 async def root():
     return {'message': 'Welcome to Image to 3D Point Cloud!'}
 
@@ -102,6 +107,8 @@ async def cleanup(file_path: str):
     except Exception:
         pass
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
