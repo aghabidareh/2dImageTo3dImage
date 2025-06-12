@@ -66,3 +66,33 @@ def create_point_cloud(rgb_image: Image.Image, depth_map: np.ndarray, focal_leng
 app.get('/')
 async def root():
     return {'message': 'Welcome to Image to 3D Point Cloud!'}
+
+
+@app.post("/convert-to-3d/", response_class=FileResponse)
+async def convert_to_3d(file: UploadFile = File(...)):
+    # Validate file type
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Uploaded file must be an image (e.g., JPG, PNG)")
+
+    try:
+        contents = await file.read()
+        image = Image.open(io.BytesIO(contents)).convert("RGB")
+
+        depth_map = estimate_depth(image)
+
+        point_cloud = create_point_cloud(image, depth_map)
+
+        temp_file = os.path.join(tempfile.gettempdir(), f"point_cloud_{uuid.uuid4()}.ply")
+        o3d.io.write_point_cloud(temp_file, point_cloud)
+
+        return FileResponse(
+            temp_file,
+            media_type="application/octet-stream",
+            filename="point_cloud.ply",
+            background=BackgroundTask(cleanup, temp_file)
+        )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
+
+
