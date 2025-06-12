@@ -10,4 +10,5 @@ import os
 import tempfile
 import uuid
 
+app = FastAPI(title="Image to 3D Point Cloud API", description="API for Image to 3D Point Cloud", version="1.0")
 
