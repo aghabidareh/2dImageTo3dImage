@@ -21,3 +21,19 @@ transform = Compose([
 def load_image(image_path):
     img = Image.open(image_path).convert("RGB")
     return img
+
+
+def estimate_depth(image):
+    img_input = transform(image).unsqueeze(0).to(device)
+
+    with torch.no_grad():
+        depth = midas(img_input)
+
+    depth = torch.nn.functional.interpolate(
+        depth.unsqueeze(1),
+        size=(image.height, image.width),
+        mode="bicubic",
+        align_corners=False,
+    ).squeeze().cpu().numpy()
+
+    return depth
