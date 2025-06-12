@@ -24,3 +24,19 @@ transform = Compose([
     ToTensor(),
     Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
+
+
+def estimate_depth(image: Image.Image):
+    img_input = transform(image).unsqueeze(0).to(device)
+
+    with torch.no_grad():
+        depth = midas(img_input)
+
+    depth = torch.nn.functional.interpolate(
+        depth.unsqueeze(1),
+        size=(image.height, image.width),
+        mode="bicubic",
+        align_corners=False,
+    ).squeeze().cpu().numpy()
+
+    return depth
