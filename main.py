@@ -18,6 +18,7 @@ transform = Compose([
     Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
+
 def load_image(image_path):
     img = Image.open(image_path).convert("RGB")
     return img
@@ -72,6 +73,7 @@ def main():
     output_path = "output_point_cloud.ply"
     o3d.io.write_point_cloud(output_path, point_cloud)
     print(f"Point cloud saved to {output_path}")
+
 
 if __name__ == "__main__":
     main()
