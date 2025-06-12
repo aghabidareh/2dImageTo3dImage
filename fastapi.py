@@ -63,4 +63,6 @@ def create_point_cloud(rgb_image: Image.Image, depth_map: np.ndarray, focal_leng
 
     return pcd
 
-
+app.get('/')
+async def root():
+    return {'message': 'Welcome to Image to 3D Point Cloud!'}
