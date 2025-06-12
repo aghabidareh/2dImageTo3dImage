@@ -96,3 +96,10 @@ async def convert_to_3d(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
 
 
+async def cleanup(file_path: str):
+    try:
+        os.remove(file_path)
+    except Exception:
+        pass
+
+
